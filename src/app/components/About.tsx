@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { useInView } from "motion/react";
 import { useRef } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Github } from "lucide-react";
 
 const projects = [
   {
@@ -16,6 +16,7 @@ const projects = [
       "Full-stack Ed-Tech platform bridging instructors and students with OTP auth, course CRUD, rating system, and Razorpay payment integration.",
     stack: ["React", "Node.js", "MongoDB", "Cloudinary", "Razorpay"],
     link: "https://study-notion-frontend-kappa-seven.vercel.app/",
+    githubLink: undefined as string | undefined,
   },
   {
     emoji: "🎬",
@@ -29,6 +30,7 @@ const projects = [
       "YouTube-inspired backend with JWT authentication, video uploads via Multer, channel subscriptions, and personalized playlist management.",
     stack: ["Node.js", "Express", "MongoDB", "JWT", "Multer", "Cloudinary"],
     link: "https://github.com/Navneet-pratap1027/Backend_Project",
+    githubLink: undefined as string | undefined,
   },
   {
     emoji: "🏨",
@@ -42,6 +44,21 @@ const projects = [
       "Hotel booking platform with map-based property discovery, host listing management, and a streamlined booking flow using geolocation APIs.",
     stack: ["React", "Node.js", "MongoDB", "Maps API", "Express"],
     link: "https://hotel-hub-platform.vercel.app/",
+    githubLink: undefined as string | undefined,
+  },
+  {
+    emoji: "🧾",
+    title: "InvoicerPro",
+    tag: "AI SaaS Platform",
+    tagColor: "rgba(99,102,241,0.18)",
+    tagBorder: "rgba(99,102,241,0.4)",
+    tagText: "#818cf8",
+    topBorder: "linear-gradient(90deg, #6366f1, #a855f7)",
+    description:
+      "Production-ready AI-powered SaaS invoicing platform with PDF generation, email delivery, revenue dashboard, and Google Gemini AI assistant. JWT Auth, Google OAuth, CI/CD via GitHub Actions, Dockerized, Render + Vercel deployed.",
+    stack: ["React", "Node.js", "MongoDB", "Express", "Docker", "Google Gemini"],
+    link: "https://invoicer-pro-nine.vercel.app",
+    githubLink: "https://github.com/Navneet-pratap1027/Invoicer_Pro" as string | undefined,
   },
 ];
 
@@ -443,16 +460,41 @@ export function About({ aboutImage }: { aboutImage?: string }) {
                   />
 
                   {/* View Project Link */}
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 transition-colors"
-                    style={{ fontSize: "0.82rem", fontWeight: 600 }}
-                  >
-                    View Project
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                  <div className="flex items-center gap-3">
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 transition-colors"
+                      style={{ fontSize: "0.82rem", fontWeight: 600 }}
+                    >
+                      View Project
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                    {project.githubLink && (
+                      <a
+                        href={project.githubLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 transition-colors"
+                        style={{
+                          fontSize: "0.82rem",
+                          fontWeight: 600,
+                          color: "#64748b",
+                          textDecoration: "none",
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.color = "#94a3b8";
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.color = "#64748b";
+                        }}
+                      >
+                        <Github className="w-3.5 h-3.5" />
+                        GitHub
+                      </a>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
