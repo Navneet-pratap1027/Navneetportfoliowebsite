@@ -5,20 +5,28 @@ import { ExternalLink, Github } from "lucide-react";
 
 const codingProfiles = [
   {
-    emoji: "🟡",
-    platform: "LeetCode",
-    username: "navneetpratap_2710",
-    link: "https://leetcode.com/u/navneetpratap_2710/",
-    accentColor: "#FFA116",
-    bgColor: "rgba(255,161,22,0.08)",
-  },
-  {
     emoji: "🟢",
     platform: "GeeksforGeeks",
     username: "navneetpratap2710",
     link: "https://www.geeksforgeeks.org/profile/navneetpratap2710",
     accentColor: "#2F8D46",
     bgColor: "rgba(47,141,70,0.08)",
+  },
+  {
+    emoji: "🟩",
+    platform: "HackerRank",
+    username: "pratap102718",
+    link: "https://www.hackerrank.com/profile/pratap102718",
+    accentColor: "#00EA64",
+    bgColor: "rgba(0,234,100,0.08)",
+  },
+  {
+    emoji: "🟡",
+    platform: "LeetCode",
+    username: "navneetpratap_2710",
+    link: "https://leetcode.com/u/navneetpratap_2710/",
+    accentColor: "#FFA116",
+    bgColor: "rgba(255,161,22,0.08)",
   },
 ];
 
@@ -255,7 +263,7 @@ export function ProblemSolving() {
                 left: 0,
                 right: 0,
                 height: "3px",
-                background: "linear-gradient(90deg, #FFA116, #2F8D46)",
+                background: "linear-gradient(90deg, #2F8D46, #00EA64, #FFA116)",
                 borderRadius: "18px 18px 0 0",
               }}
             />
