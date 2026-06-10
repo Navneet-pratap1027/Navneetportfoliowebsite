@@ -8,7 +8,7 @@ const codingProfiles = [
     emoji: "🟢",
     platform: "GeeksforGeeks",
     username: "navneetpratap2710",
-    link: "https://www.geeksforgeeks.org/profile/navneetpratap2710",
+    link: "https://www.geeksforgeeks.org/profile/navneetpratap2710?tab=activity",
     accentColor: "#2F8D46",
     bgColor: "rgba(47,141,70,0.08)",
   },
