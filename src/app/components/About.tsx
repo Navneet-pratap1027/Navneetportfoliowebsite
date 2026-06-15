@@ -60,6 +60,20 @@ const projects = [
     link: "https://invoicer-pro-nine.vercel.app",
     githubLink: "https://github.com/Navneet-pratap1027/Invoicer_Pro" as string | undefined,
   },
+  {
+    emoji: "🤖",
+    title: "BuildNext AI",
+    tag: "AI Career Tool",
+    tagColor: "rgba(245,158,11,0.18)",
+    tagBorder: "rgba(245,158,11,0.4)",
+    tagText: "#fbbf24",
+    topBorder: "linear-gradient(90deg, #f59e0b, #ef4444)",
+    description:
+      "AI-powered platform that analyzes GitHub portfolios, detects skill gaps, calculates portfolio health metrics, and generates AI-driven career recommendations using Google Gemini.",
+    stack: ["React.js", "Node.js", "Express.js", "Google Gemini API", "GitHub REST API"],
+    link: "https://buildnext-ai.vercel.app",
+    githubLink: "https://github.com/Navneet-pratap1027/Buildnext-ai" as string | undefined,
+  },
 ];
 
 export function About({ aboutImage }: { aboutImage?: string }) {
