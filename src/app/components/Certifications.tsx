@@ -7,22 +7,38 @@ const certifications = [
   {
     title: "Front-End Developer Capstone",
     issuer: "Meta / Coursera",
+    date: "",
     description:
       "Comprehensive capstone project demonstrating proficiency in front-end development using React, including building a full responsive web application with modern UI/UX principles.",
     skills: ["React.js", "JavaScript", "HTML/CSS", "UI/UX", "Responsive Design"],
     icon: "🎯",
     color: "#06b6d4",
     gradient: "linear-gradient(135deg, #06b6d4, #0ea5e9)",
+    link: "",
   },
   {
     title: "Full Stack Web Development",
     issuer: "Online Certification",
+    date: "",
     description:
       "Mastered the complete MERN stack (MongoDB, Express.js, React, Node.js) covering both frontend and backend development, RESTful APIs, and database management.",
     skills: ["MongoDB", "Express.js", "React.js", "Node.js", "REST APIs"],
     icon: "🚀",
     color: "#3b82f6",
     gradient: "linear-gradient(135deg, #3b82f6, #6366f1)",
+    link: "",
+  },
+  {
+    title: "Software Engineer Intern",
+    issuer: "HackerRank",
+    date: "June 2026",
+    description:
+      "Covers topics like Problem Solving and SQL, validating core software engineering fundamentals and the ability to write efficient, structured code.",
+    skills: ["Problem Solving", "SQL", "Algorithms", "Data Structures"],
+    icon: "🟩",
+    color: "#00EA64",
+    gradient: "linear-gradient(135deg, #00EA64, #00c853)",
+    link: "https://www.hackerrank.com/certificates/6d9bcbe07246",
   },
 ];
 
@@ -181,16 +197,29 @@ export function Certifications() {
                 <div className="flex items-center gap-2">
                   <Award className="w-4 h-4" style={{ color: cert.color }} />
                   <span className="text-slate-500 text-xs">
-                    Verified Certificate
+                    {cert.date ? cert.date : "Verified Certificate"}
                   </span>
                 </div>
-                <motion.button
-                  whileHover={{ x: 3 }}
-                  className="flex items-center gap-1 text-xs"
-                  style={{ color: cert.color }}
-                >
-                  View <ExternalLink className="w-3 h-3" />
-                </motion.button>
+                {cert.link ? (
+                  <motion.a
+                    href={cert.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ x: 3 }}
+                    className="flex items-center gap-1 text-xs"
+                    style={{ color: cert.color, textDecoration: "none" }}
+                  >
+                    View <ExternalLink className="w-3 h-3" />
+                  </motion.a>
+                ) : (
+                  <motion.button
+                    whileHover={{ x: 3 }}
+                    className="flex items-center gap-1 text-xs"
+                    style={{ color: cert.color }}
+                  >
+                    View <ExternalLink className="w-3 h-3" />
+                  </motion.button>
+                )}
               </div>
             </motion.div>
           ))}
@@ -204,7 +233,7 @@ export function Certifications() {
           className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto"
         >
           {[
-            { value: "2", label: "Certifications", color: "#06b6d4" },
+            { value: "3", label: "Certifications", color: "#06b6d4" },
             { value: "5+", label: "Technologies", color: "#3b82f6" },
             { value: "3+", label: "Projects Built", color: "#8b5cf6" },
             { value: "100%", label: "Dedication", color: "#f59e0b" },
