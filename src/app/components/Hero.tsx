@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { MapPin, Linkedin, Github, ChevronDown, Sparkles } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 const roles = [
   "MERN Stack Developer",
@@ -18,7 +17,7 @@ const particles = Array.from({ length: 20 }, (_, i) => ({
   duration: Math.random() * 10 + 8,
 }));
 
-export function Hero({ heroImage }: { heroImage: string }) {
+export function Hero({ heroImage: _heroImage }: { heroImage: string }) {
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -80,9 +79,9 @@ export function Hero({ heroImage }: { heroImage: string }) {
         style={{ background: "radial-gradient(circle, #3b82f6, transparent)" }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-32 flex flex-col lg:flex-row items-center gap-16 w-full">
-        {/* Left Content */}
-        <div className="flex-1 text-center lg:text-left">
+      <div className="max-w-4xl mx-auto px-6 py-32 flex flex-col items-center w-full">
+        {/* Content */}
+        <div className="w-full text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -120,7 +119,7 @@ export function Hero({ heroImage }: { heroImage: string }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex items-center gap-2 justify-center lg:justify-start mb-6 h-10"
+            className="flex items-center gap-2 justify-center mb-6 h-10"
           >
             <span className="text-slate-300" style={{ fontSize: "1.3rem" }}>
               I'm a{" "}
@@ -153,7 +152,7 @@ export function Hero({ heroImage }: { heroImage: string }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex items-center gap-2 text-slate-400 justify-center lg:justify-start mb-8"
+            className="flex items-center gap-2 text-slate-400 justify-center mb-8"
           >
             <MapPin className="w-4 h-4 text-cyan-500" />
             <span className="text-sm">Gorakhpur, Uttar Pradesh, India</span>
@@ -163,7 +162,7 @@ export function Hero({ heroImage }: { heroImage: string }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-slate-400 text-base mb-10 max-w-xl leading-relaxed mx-auto lg:mx-0"
+            className="text-slate-400 text-base mb-10 max-w-xl leading-relaxed mx-auto"
           >
             Aspiring developer building responsive, user-friendly websites with HTML, CSS, JavaScript & React.
             Exploring Python & Machine Learning to create intelligent solutions.
@@ -173,7 +172,7 @@ export function Hero({ heroImage }: { heroImage: string }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="flex flex-wrap gap-4 justify-center lg:justify-start mb-10"
+            className="flex flex-wrap gap-4 justify-center mb-10"
           >
             <motion.a
               whileHover={{ scale: 1.05 }}
@@ -208,7 +207,7 @@ export function Hero({ heroImage }: { heroImage: string }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.9 }}
-            className="flex gap-4 justify-center lg:justify-start"
+            className="flex gap-4 justify-center"
           >
             {[
               {
@@ -231,79 +230,6 @@ export function Hero({ heroImage }: { heroImage: string }) {
             ))}
           </motion.div>
         </div>
-
-        {/* Right — Avatar */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex-shrink-0 flex flex-col items-center gap-6"
-        >
-          <div className="relative floating-badge">
-            {/* Outer glow ring */}
-            <div
-              className="absolute inset-0 rounded-full blur-xl opacity-40"
-              style={{
-                background:
-                  "linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6)",
-                transform: "scale(1.1)",
-              }}
-            />
-            {/* Avatar ring */}
-            <div className="avatar-ring pulse-glow">
-              <div className="w-64 h-64 rounded-full overflow-hidden bg-slate-800 relative">
-                <ImageWithFallback
-                  src={heroImage}
-                  alt="Navneet Pratap"
-                  className="w-full h-full object-cover"
-                />
-                {/* Overlay */}
-                <div
-                  className="absolute inset-0 rounded-full"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(6,182,212,0.1) 0%, transparent 100%)",
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Floating badges */}
-            <motion.div
-              className="absolute -top-4 -right-4 glass-card px-3 py-1.5 rounded-full text-xs text-cyan-400 border border-cyan-500/30"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-            >
-              🚀 MERN Stack
-            </motion.div>
-            <motion.div
-              className="absolute -bottom-4 -left-4 glass-card px-3 py-1.5 rounded-full text-xs text-purple-400 border border-purple-500/30"
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-            >
-              🤖 ML Learner
-            </motion.div>
-          </div>
-
-          {/* Stats */}
-          <div className="flex gap-6 mt-4">
-            {[
-              { value: "3+", label: "Projects" },
-              { value: "2", label: "Certifications" },
-              { value: "5+", label: "Skills" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div
-                  className="text-gradient-cyan"
-                  style={{ fontSize: "1.5rem", fontWeight: 800 }}
-                >
-                  {stat.value}
-                </div>
-                <div className="text-slate-500 text-xs">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </div>
 
       {/* Scroll Indicator */}
