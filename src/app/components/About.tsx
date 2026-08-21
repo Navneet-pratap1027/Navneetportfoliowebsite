@@ -1,9 +1,26 @@
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useInView } from "motion/react";
-import { useRef } from "react";
-import { ExternalLink, Github } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { ExternalLink, Github, X, CheckCircle2 } from "lucide-react";
 
-const projects = [
+interface Project {
+  emoji: string;
+  title: string;
+  tag: string;
+  tagColor: string;
+  tagBorder: string;
+  tagText: string;
+  topBorder: string;
+  description: string;
+  stack: string[];
+  link: string;
+  githubLink?: string;
+  problem?: string;
+  solution?: string;
+  highlights?: string[];
+}
+
+const projects: Project[] = [
   {
     emoji: "🎓",
     title: "StudyNotion",
@@ -16,7 +33,9 @@ const projects = [
       "Full-stack Ed-Tech platform bridging instructors and students with OTP auth, course CRUD, rating system, and Razorpay payment integration.",
     stack: ["React", "Node.js", "MongoDB", "Cloudinary", "Razorpay"],
     link: "https://study-notion-frontend-kappa-seven.vercel.app/",
-    githubLink: undefined as string | undefined,
+    problem: "Students and educators lacked an affordable, self-hosted platform for creating and selling courses without relying on large incumbents.",
+    solution: "Built a full MERN-stack Ed-Tech SaaS with role-based auth (student/instructor), media hosting via Cloudinary, and Razorpay for payments.",
+    highlights: ["OTP-based email auth", "Course CRUD & rating system", "Razorpay payment integration", "Cloudinary media uploads", "Responsive dashboard"],
   },
   {
     emoji: "🎬",
@@ -30,7 +49,10 @@ const projects = [
       "YouTube-inspired backend with JWT authentication, video uploads via Multer, channel subscriptions, and personalized playlist management.",
     stack: ["Node.js", "Express", "MongoDB", "JWT", "Multer", "Cloudinary"],
     link: "https://github.com/Navneet-pratap1027/Backend_Project",
-    githubLink: undefined as string | undefined,
+    githubLink: "https://github.com/Navneet-pratap1027/Backend_Project",
+    problem: "Understanding how large-scale video platforms manage auth, media, and real-time interactions at the backend layer.",
+    solution: "Built a production-grade REST API backend covering the full YouTube domain — channels, videos, subscriptions, playlists, and tweets.",
+    highlights: ["JWT access + refresh token auth", "Video & thumbnail upload via Multer", "Cloudinary CDN integration", "Channel subscription system", "Aggregation pipelines for feed"],
   },
   {
     emoji: "🏨",
@@ -44,7 +66,9 @@ const projects = [
       "Hotel booking platform with map-based property discovery, host listing management, and a streamlined booking flow using geolocation APIs.",
     stack: ["React", "Node.js", "MongoDB", "Maps API", "Express"],
     link: "https://hotel-hub-platform.vercel.app/",
-    githubLink: undefined as string | undefined,
+    problem: "Travelers need a simple way to discover and book nearby hotels with map-based discovery rather than list-only interfaces.",
+    solution: "Created a full-stack booking app with geolocation-powered map discovery, host-side listing CRUD, and an end-to-end booking flow.",
+    highlights: ["Map-based property discovery", "Host listing management", "Geolocation APIs integration", "Booking flow with date selection", "Responsive across all devices"],
   },
   {
     emoji: "🧾",
@@ -58,7 +82,10 @@ const projects = [
       "Production-ready AI-powered SaaS invoicing platform with PDF generation, email delivery, revenue dashboard, and Google Gemini AI assistant. JWT Auth, Google OAuth, CI/CD via GitHub Actions, Dockerized, Render + Vercel deployed.",
     stack: ["React", "Node.js", "MongoDB", "Express", "Docker", "Google Gemini"],
     link: "https://invoicer-pro-nine.vercel.app",
-    githubLink: "https://github.com/Navneet-pratap1027/Invoicer_Pro" as string | undefined,
+    githubLink: "https://github.com/Navneet-pratap1027/Invoicer_Pro",
+    problem: "Freelancers and small businesses waste hours creating invoices manually and lack AI-powered insights into their revenue.",
+    solution: "Shipped a full SaaS product with AI-generated invoice drafts, PDF export, Nodemailer delivery, and a revenue analytics dashboard.",
+    highlights: ["JWT Auth + Google OAuth", "AI invoice drafts via Google Gemini", "PDF generation & email delivery", "Revenue dashboard & analytics", "CI/CD via GitHub Actions, Dockerized"],
   },
   {
     emoji: "🤖",
@@ -72,13 +99,213 @@ const projects = [
       "AI-powered platform that analyzes GitHub portfolios, detects skill gaps, calculates portfolio health metrics, and generates AI-driven career recommendations using Google Gemini.",
     stack: ["React.js", "Node.js", "Express.js", "Google Gemini API", "GitHub REST API"],
     link: "https://buildnext-ai.vercel.app",
-    githubLink: "https://github.com/Navneet-pratap1027/Buildnext-ai" as string | undefined,
+    githubLink: "https://github.com/Navneet-pratap1027/Buildnext-ai",
+    problem: "Developers struggle to objectively evaluate their own GitHub portfolios and understand what skills to build for career growth.",
+    solution: "Built an AI tool that ingests a GitHub username, scores the portfolio across multiple dimensions, and surfaces personalized career recommendations.",
+    highlights: ["GitHub REST API portfolio analysis", "Portfolio health score (0–100)", "Skill gap detection & roadmap", "AI career recommendations via Gemini", "Real-time streaming responses"],
+  },
+  {
+    emoji: "📋",
+    title: "EvidenceLens",
+    tag: "AI / Full Stack",
+    tagColor: "rgba(34,197,94,0.18)",
+    tagBorder: "rgba(34,197,94,0.4)",
+    tagText: "#4ade80",
+    topBorder: "linear-gradient(90deg, #22c55e, #16a34a)",
+    description:
+      "AI-powered legal evidence analysis tool using RAG pipelines, OCR, and Whisper transcription to extract structured insights from documents, images, and audio files.",
+    stack: ["Python", "FastAPI", "RAG", "OCR", "Whisper", "LangChain"],
+    link: "#",
+    problem: "Legal teams spend enormous time manually reviewing evidence — documents, audio recordings, and images — looking for key facts and patterns.",
+    solution: "Built a RAG-based AI system that processes multi-modal legal evidence using OCR, Whisper audio transcription, and LLM-powered structured extraction.",
+    highlights: ["RAG pipeline for document Q&A", "Whisper audio transcription", "OCR for scanned documents", "Structured insight extraction", "FastAPI REST backend"],
+  },
+  {
+    emoji: "🩺",
+    title: "Disease Detection",
+    tag: "Machine Learning",
+    tagColor: "rgba(239,68,68,0.18)",
+    tagBorder: "rgba(239,68,68,0.4)",
+    tagText: "#f87171",
+    topBorder: "linear-gradient(90deg, #ef4444, #f97316)",
+    description:
+      "Deep learning model using MobileNetV2 transfer learning to detect diseases from medical images with high accuracy. Built with TensorFlow/Keras and served via OpenCV.",
+    stack: ["Python", "TensorFlow", "Keras", "MobileNetV2", "OpenCV"],
+    link: "#",
+    problem: "Early disease detection from medical imagery requires expensive specialists; an accessible ML model can serve as a first-pass screening tool.",
+    solution: "Fine-tuned MobileNetV2 with transfer learning on labeled medical image datasets, achieving high classification accuracy with a lightweight inference pipeline.",
+    highlights: ["MobileNetV2 transfer learning", "TensorFlow/Keras training pipeline", "OpenCV image preprocessing", "High classification accuracy", "Lightweight for edge deployment"],
   },
 ];
+
+function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: "fixed", inset: 0, zIndex: 9999,
+        background: "rgba(2,6,23,0.85)",
+        backdropFilter: "blur(10px)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "24px",
+        overflowY: "auto",
+      }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 32 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 32 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: "640px",
+          background: "#0d1117",
+          border: "1px solid rgba(255,255,255,0.1)",
+          borderRadius: "20px",
+          overflow: "hidden",
+          position: "relative",
+        }}
+      >
+        {/* Top accent bar */}
+        <div style={{ height: "3px", background: project.topBorder }} />
+
+        {/* Header */}
+        <div style={{ padding: "28px 28px 0", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px" }}>
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <span style={{ fontSize: "2rem" }}>{project.emoji}</span>
+              <h3 style={{ color: "#fff", fontSize: "1.4rem", fontWeight: 800 }}>{project.title}</h3>
+            </div>
+            <span
+              style={{
+                fontSize: "10px", fontWeight: 600, padding: "3px 10px", borderRadius: "999px",
+                background: project.tagColor, border: `1px solid ${project.tagBorder}`, color: project.tagText,
+              }}
+            >
+              {project.tag}
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "10px", padding: "8px", color: "#64748b", cursor: "pointer", flexShrink: 0,
+            }}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "24px 28px 28px" }}>
+          {project.problem && (
+            <div style={{ marginBottom: "20px" }}>
+              <p style={{ color: "#64748b", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "8px" }}>The Problem</p>
+              <p style={{ color: "#94a3b8", fontSize: "0.875rem", lineHeight: 1.7 }}>{project.problem}</p>
+            </div>
+          )}
+
+          {project.solution && (
+            <div style={{ marginBottom: "20px" }}>
+              <p style={{ color: "#64748b", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "8px" }}>The Solution</p>
+              <p style={{ color: "#94a3b8", fontSize: "0.875rem", lineHeight: 1.7 }}>{project.solution}</p>
+            </div>
+          )}
+
+          {project.highlights && (
+            <div style={{ marginBottom: "24px" }}>
+              <p style={{ color: "#64748b", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "10px" }}>Key Features</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                {project.highlights.map(h => (
+                  <div key={h} className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" style={{ color: project.tagText }} />
+                    <span style={{ color: "#94a3b8", fontSize: "0.83rem" }}>{h}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Stack */}
+          <div style={{ marginBottom: "24px" }}>
+            <p style={{ color: "#64748b", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "10px" }}>Tech Stack</p>
+            <div className="flex flex-wrap gap-2">
+              {project.stack.map(t => (
+                <span
+                  key={t}
+                  style={{
+                    fontSize: "10px", padding: "3px 9px", borderRadius: "6px",
+                    background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+                    color: "#94a3b8", fontFamily: "JetBrains Mono, monospace",
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Links */}
+          <div className="flex gap-3 flex-wrap">
+            {project.link && project.link !== "#" && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2"
+                style={{
+                  padding: "10px 20px", borderRadius: "10px",
+                  background: "linear-gradient(135deg, #06b6d4, #3b82f6)",
+                  color: "#fff", fontSize: "0.85rem", fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Live Demo
+              </a>
+            )}
+            {project.githubLink && (
+              <a
+                href={project.githubLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2"
+                style={{
+                  padding: "10px 20px", borderRadius: "10px",
+                  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
+                  color: "#94a3b8", fontSize: "0.85rem", fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                <Github className="w-3.5 h-3.5" />
+                GitHub
+              </a>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export function About({ aboutImage }: { aboutImage?: string }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
     <section id="about" className="section-darker py-24 relative overflow-hidden">
@@ -358,6 +585,9 @@ export function About({ aboutImage }: { aboutImage?: string }) {
                 }}
               />
             </h3>
+            <p style={{ color: "#475569", fontSize: "0.82rem", marginTop: "12px" }}>
+              Click any card to explore the project in detail.
+            </p>
           </div>
 
           {/* Project Cards Grid */}
@@ -367,7 +597,8 @@ export function About({ aboutImage }: { aboutImage?: string }) {
                 key={project.title}
                 initial={{ opacity: 0, y: 24 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.5 + i * 0.12 }}
+                transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                onClick={() => setSelectedProject(project)}
                 style={{
                   position: "relative",
                   background: "rgba(255,255,255,0.03)",
@@ -377,7 +608,7 @@ export function About({ aboutImage }: { aboutImage?: string }) {
                   overflow: "hidden",
                   padding: "0",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
-                  cursor: "default",
+                  cursor: "pointer",
                 }}
                 whileHover={{
                   y: -8,
@@ -394,9 +625,7 @@ export function About({ aboutImage }: { aboutImage?: string }) {
                 <div
                   style={{
                     position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
+                    top: 0, left: 0, right: 0,
                     height: "3px",
                     background: project.topBorder,
                     borderRadius: "16px 16px 0 0",
@@ -465,44 +694,40 @@ export function About({ aboutImage }: { aboutImage?: string }) {
                   </div>
 
                   {/* Divider */}
-                  <div
-                    style={{
-                      height: "1px",
-                      background: "rgba(6,182,212,0.1)",
-                      marginBottom: "16px",
-                    }}
-                  />
+                  <div style={{ height: "1px", background: "rgba(6,182,212,0.1)", marginBottom: "16px" }} />
 
-                  {/* View Project Link */}
+                  {/* Footer Links */}
                   <div className="flex items-center gap-3">
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 transition-colors"
-                      style={{ fontSize: "0.82rem", fontWeight: 600 }}
-                    >
-                      View Project
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    {project.link && project.link !== "#" ? (
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 transition-colors"
+                        style={{ fontSize: "0.82rem", fontWeight: 600 }}
+                      >
+                        View Project
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    ) : (
+                      <span
+                        className="flex items-center gap-1.5"
+                        style={{ fontSize: "0.82rem", fontWeight: 600, color: "#475569" }}
+                      >
+                        Click to explore
+                      </span>
+                    )}
                     {project.githubLink && (
                       <a
                         href={project.githubLink}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
                         className="flex items-center gap-1.5 transition-colors"
-                        style={{
-                          fontSize: "0.82rem",
-                          fontWeight: 600,
-                          color: "#64748b",
-                          textDecoration: "none",
-                        }}
-                        onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLAnchorElement).style.color = "#94a3b8";
-                        }}
-                        onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLAnchorElement).style.color = "#64748b";
-                        }}
+                        style={{ fontSize: "0.82rem", fontWeight: 600, color: "#64748b", textDecoration: "none" }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#94a3b8"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#64748b"; }}
                       >
                         <Github className="w-3.5 h-3.5" />
                         GitHub
@@ -515,6 +740,13 @@ export function About({ aboutImage }: { aboutImage?: string }) {
           </div>
         </motion.div>
       </div>
+
+      {/* Project Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
