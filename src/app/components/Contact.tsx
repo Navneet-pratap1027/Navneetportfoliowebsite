@@ -1,15 +1,34 @@
 import { motion } from "motion/react";
 import { useInView } from "motion/react";
 import { useRef, useState } from "react";
+import emailjs from "@emailjs/browser";
 import {
   Linkedin,
   Mail,
   MapPin,
-  Phone,
   Send,
   MessageCircle,
   CheckCircle,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
+
+// ─── EmailJS configuration ────────────────────────────────────────────────────
+// Sign up at https://www.emailjs.com, then set these three values.
+// Add them to your .env file (Vite exposes variables prefixed with VITE_):
+//
+//   VITE_EMAILJS_SERVICE_ID   → EmailJS dashboard → Email Services → Service ID
+//   VITE_EMAILJS_TEMPLATE_ID  → EmailJS dashboard → Email Templates → Template ID
+//   VITE_EMAILJS_PUBLIC_KEY   → EmailJS dashboard → Account → Public Key
+//
+// In your EmailJS template, map these template variables:
+//   {{from_name}}    → sender's name
+//   {{from_email}}   → sender's email
+//   {{message}}      → message body
+//   {{to_email}}     → pratap102718@gmail.com  (set as a fixed value in the template)
+const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  as string;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
+const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string;
 
 const contactDetails = [
   {
@@ -31,24 +50,63 @@ const contactDetails = [
   {
     icon: Mail,
     label: "Email",
-    value: "navneetpratap@email.com",
-    href: "mailto:navneetpratap@email.com",
+    value: "pratap102718@gmail.com",
+    href: "mailto:pratap102718@gmail.com",
     color: "#8b5cf6",
-    display: "navneetpratap@email.com",
+    display: "pratap102718@gmail.com",
   },
 ];
+
+type FormStatus = "idle" | "loading" | "success" | "error";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function Contact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
-  const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [errors, setErrors] = useState<Partial<typeof form>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validate = () => {
+    const e: Partial<typeof form> = {};
+    if (!form.name.trim()) e.name = "Name is required.";
+    if (!form.email.trim()) e.email = "Email is required.";
+    else if (!EMAIL_RE.test(form.email)) e.email = "Enter a valid email address.";
+    if (!form.message.trim()) e.message = "Message is required.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4000);
-    setForm({ name: "", email: "", message: "" });
+    if (!validate()) return;
+
+    setStatus("loading");
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name:  form.name.trim(),
+          from_email: form.email.trim(),
+          message:    form.message.trim(),
+          to_email:   "pratap102718@gmail.com",
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY },
+      );
+      setStatus("success");
+      setForm({ name: "", email: "", message: "" });
+      setErrors({});
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  const handleChange = (field: keyof typeof form, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
+    if (status === "error") setStatus("idle");
   };
 
   return (
@@ -176,9 +234,7 @@ export function Contact() {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="flex-1"
           >
-            <div
-              className="cert-card glass-card rounded-2xl p-8 relative"
-            >
+            <div className="cert-card glass-card rounded-2xl p-8 relative">
               <div className="flex items-center gap-2 mb-6">
                 <MessageCircle className="w-5 h-5 text-cyan-500" />
                 <h3
@@ -192,7 +248,7 @@ export function Contact() {
                 </h3>
               </div>
 
-              {submitted ? (
+              {status === "success" ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -207,14 +263,22 @@ export function Contact() {
                       marginBottom: "0.5rem",
                     }}
                   >
-                    Message Sent!
+                    Message sent successfully!
                   </h4>
                   <p className="text-slate-400 text-sm">
                     Thanks for reaching out. I'll get back to you soon!
                   </p>
+                  <button
+                    onClick={() => setStatus("idle")}
+                    className="mt-6 text-cyan-400 text-sm underline underline-offset-2"
+                    style={{ background: "none", border: "none", cursor: "pointer" }}
+                  >
+                    Send another message
+                  </button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+                  {/* Name */}
                   <div>
                     <label className="text-slate-400 text-xs mb-2 block" style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Your Name
@@ -223,15 +287,22 @@ export function Contact() {
                       type="text"
                       required
                       value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      onChange={(e) => handleChange("name", e.target.value)}
                       placeholder="e.g. John Doe"
+                      disabled={status === "loading"}
                       className="w-full px-4 py-3 rounded-xl text-slate-200 placeholder-slate-600 text-sm outline-none transition-all duration-300 focus:border-cyan-500/50"
                       style={{
                         background: "rgba(255,255,255,0.04)",
-                        border: "1px solid rgba(255,255,255,0.08)",
+                        border: `1px solid ${errors.name ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.08)"}`,
+                        opacity: status === "loading" ? 0.6 : 1,
                       }}
                     />
+                    {errors.name && (
+                      <p className="text-red-400 text-xs mt-1">{errors.name}</p>
+                    )}
                   </div>
+
+                  {/* Email */}
                   <div>
                     <label className="text-slate-400 text-xs mb-2 block" style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Email Address
@@ -240,15 +311,22 @@ export function Contact() {
                       type="email"
                       required
                       value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      onChange={(e) => handleChange("email", e.target.value)}
                       placeholder="e.g. john@email.com"
+                      disabled={status === "loading"}
                       className="w-full px-4 py-3 rounded-xl text-slate-200 placeholder-slate-600 text-sm outline-none transition-all duration-300"
                       style={{
                         background: "rgba(255,255,255,0.04)",
-                        border: "1px solid rgba(255,255,255,0.08)",
+                        border: `1px solid ${errors.email ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.08)"}`,
+                        opacity: status === "loading" ? 0.6 : 1,
                       }}
                     />
+                    {errors.email && (
+                      <p className="text-red-400 text-xs mt-1">{errors.email}</p>
+                    )}
                   </div>
+
+                  {/* Message */}
                   <div>
                     <label className="text-slate-400 text-xs mb-2 block" style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Message
@@ -256,24 +334,59 @@ export function Contact() {
                     <textarea
                       required
                       value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                      onChange={(e) => handleChange("message", e.target.value)}
                       placeholder="Tell me about your project or just say hi!"
                       rows={5}
+                      disabled={status === "loading"}
                       className="w-full px-4 py-3 rounded-xl text-slate-200 placeholder-slate-600 text-sm outline-none transition-all duration-300 resize-none"
                       style={{
                         background: "rgba(255,255,255,0.04)",
-                        border: "1px solid rgba(255,255,255,0.08)",
+                        border: `1px solid ${errors.message ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.08)"}`,
+                        opacity: status === "loading" ? 0.6 : 1,
                       }}
                     />
+                    {errors.message && (
+                      <p className="text-red-400 text-xs mt-1">{errors.message}</p>
+                    )}
                   </div>
+
+                  {/* Error banner */}
+                  {status === "error" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm"
+                      style={{
+                        background: "rgba(239,68,68,0.08)",
+                        border: "1px solid rgba(239,68,68,0.3)",
+                        color: "#f87171",
+                      }}
+                    >
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      Something went wrong. Please try again.
+                    </motion.div>
+                  )}
+
+                  {/* Submit button */}
                   <motion.button
                     type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    disabled={status === "loading"}
+                    whileHover={status !== "loading" ? { scale: 1.02 } : {}}
+                    whileTap={status !== "loading" ? { scale: 0.98 } : {}}
                     className="glow-btn w-full py-3 rounded-xl text-white flex items-center justify-center gap-2"
+                    style={{ opacity: status === "loading" ? 0.75 : 1, cursor: status === "loading" ? "not-allowed" : "pointer" }}
                   >
-                    <Send className="w-4 h-4" />
-                    Send Message
+                    {status === "loading" ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Sending…
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        Send Message
+                      </>
+                    )}
                   </motion.button>
                 </form>
               )}

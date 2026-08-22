@@ -248,7 +248,7 @@ export function Hero({ heroImage: _heroImage }: { heroImage: string }) {
           {[
             { icon: Linkedin, href: "https://www.linkedin.com/in/navneet-pratap-961519300", label: "LinkedIn", color: "#0ea5e9" },
             { icon: Github, href: "https://github.com/Navneet-pratap1027", label: "GitHub", color: "#94a3b8" },
-            { icon: Mail, href: "mailto:navneetpratap@email.com", label: "Email", color: "#8b5cf6" },
+            { icon: Mail, href: "mailto:pratap102718@gmail.com", label: "Email", color: "#8b5cf6" },
           ].map(({ icon: Icon, href, label, color }, i) => (
             <motion.a
               key={label}
